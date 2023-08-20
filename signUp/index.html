@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sign up</title>
+</head>
+
+<body>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <div class="wrapper">
+        <div class="form-box login">
+            <h1>SAYLANI WELFARE</h1>
+            <h3>ONLINE DISCOUNT STORE</h3>
+            <form action="#">
+                <div class="input-box">
+                    <input id="Username" type="text" required>
+                    <label>Username</label>
+                    <i class='bx bxs-user'></i>
+                </div>
+                <div class="input-box">
+                    <input id="Contact" type="text" required>
+                    <label>Contact</label>
+                    <i class='bx bxs-phone-call'></i>
+                </div>
+                <div class="input-box">
+                    <input id="Email" type="text" required>
+                    <label>Email</label>
+                    <i class='bx bx-envelope'></i>
+                </div>
+                <div class="input-box">
+                    <input id="password" type="password" required>
+                    <label>Password</label>
+                    <i class='bx bxs-hide'></i>
+                </div>
+
+                <button id="signUp" type="submit" class="btn">Sign up</button>
+                <div class="logreg-link">
+                    <p>Already have an account? <a href="../signIn/index.html" class="register-link">Sign in</a></p>
+                </div>
+            </form>
+
+        </div>
+    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.2.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/10.2.0/firebase-auth.js';
+        import { getDatabase, ref, set, update } from 'https://www.gstatic.com/firebasejs/10.2.0/firebase-database.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyA4n31rA7dn2RGgtS3T97iBDD6bKB98IEc",
+            authDomain: "smit-shopping-store.firebaseapp.com",
+            databaseURL: "https://smit-shopping-store-default-rtdb.firebaseio.com",
+            projectId: "smit-shopping-store",
+            storageBucket: "smit-shopping-store.appspot.com",
+            messagingSenderId: "783574821726",
+            appId: "1:783574821726:web:1f2ab5c2de0f1606547dcf",
+            measurementId: "G-R74MPWD65Z"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const database = getDatabase(app);
+
+        document.addEventListener("DOMContentLoaded", function () {
+        // Your code here, including event listener setup
+        const signUpBtn = document.getElementById('signUp');
+        signUpBtn.addEventListener('click', (e) => {
+            const username = document.getElementById("Username").value;
+            const email = document.getElementById("Email").value;
+            const contact = document.getElementById("Contact").value;
+            const password = document.getElementById("password").value;
+            console.log(email, password);
+            //firebase code
+            createUserWithEmailAndPassword(auth, email, password)
+                .then((userCredential) => {
+                    // Signed up
+                    // document.write("You are Signed Up");
+                    const user = userCredential.user;
+                    //use uid
+                    set(ref(database, 'users/' + user.uid), {
+                        username: username,
+                        email: email,
+                        contact:contact,
+                        password: password
+                    })
+                        .then(() => {
+                            // Data saved successfully!
+                            window.location.href = '../home/index.html'
+                            alert('you are signed up');
+                            console.log(userCredential);
+                        })
+                        .catch((error) => {
+                            // The write failed...
+                            alert(error)
+                        });
+
+                })
+                .catch((error) => {
+                    console.log(error.code);
+                    console.log(error.message);
+                    // ..
+                });
+        });
+    });
+    </script>
+</body>
+
+</html>
